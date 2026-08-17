@@ -1,0 +1,58 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* mass_mailing_disable_tracking
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-17 11:11+0000\n"
+"PO-Revision-Date: 2026-08-17 11:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: mass_mailing_disable_tracking
+#: model_terms:ir.ui.view,arch_db:mass_mailing_disable_tracking.res_config_settings_view_form
+msgid ""
+"Add an invisible tracking image to mass mailing messages to track their "
+"opening by the recipient"
+msgstr ""
+"Ajoute une image de suivi invisible aux e-mails de publipostage afin "
+"de savoir s'ils ont été ouverts par le destinataire."
+
+#. module: mass_mailing_disable_tracking
+#: model:ir.model,name:mass_mailing_disable_tracking.model_res_config_settings
+msgid "Config Settings"
+msgstr "Paramètres de config"
+
+#. module: mass_mailing_disable_tracking
+#: model_terms:ir.ui.view,arch_db:mass_mailing_disable_tracking.res_config_settings_view_form
+msgid ""
+"Convert links in mass mailing messages to track link clicks by the recipient"
+msgstr ""
+"Convertir les liens contenus dans les e-mail de publipostage afin de "
+"suivre les clics effectués par les destinataires"
+
+#. module: mass_mailing_disable_tracking
+#: model:ir.model,name:mass_mailing_disable_tracking.model_mailing_mailing
+msgid "Mass Mailing"
+msgstr "Publipostage"
+
+#. module: mass_mailing_disable_tracking
+#: model:ir.model,name:mass_mailing_disable_tracking.model_mail_mail
+msgid "Outgoing Mails"
+msgstr "Emails à envoyer"
+
+#. module: mass_mailing_disable_tracking
+#: model:ir.model.fields,field_description:mass_mailing_disable_tracking.field_res_config_settings__mailing_track_links
+msgid "Track Link Clicks"
+msgstr "Suivre les clics sur les liens"
+
+#. module: mass_mailing_disable_tracking
+#: model:ir.model.fields,field_description:mass_mailing_disable_tracking.field_res_config_settings__mailing_track_open
+msgid "Track Open"
+msgstr "Suivre l'ouverture des e-mails"
