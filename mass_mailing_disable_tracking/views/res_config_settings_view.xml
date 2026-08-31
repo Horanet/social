@@ -5,7 +5,6 @@ SPDX-FileCopyrightText: 2025 hugues de keyzer
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 <odoo>
-
     <record id="res_config_settings_view_form" model="ir.ui.view">
         <field
             name="name"
@@ -14,7 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
         <field name="inherit_id" ref="mass_mailing.res_config_settings_view_form" />
         <field name="arch" type="xml">
             <xpath
-                expr="//div[hasclass('app_settings_block')][@data-key='mass_mailing']/div[hasclass('o_settings_container')][@name='managa_mail_campaigns_setting_container']"
+                expr="//div[hasclass('app_settings_block')][@data-key='mass_mailing']//div[hasclass('o_settings_container')]"
                 position="inside"
             >
                 <div class="col-lg-6 o_setting_box col-12" name="track_open">
@@ -42,5 +41,4 @@ SPDX-License-Identifier: AGPL-3.0-or-later
             </xpath>
         </field>
     </record>
-
 </odoo>

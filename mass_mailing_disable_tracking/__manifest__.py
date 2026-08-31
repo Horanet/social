@@ -5,19 +5,13 @@
 {
     "name": "Mass Mailing Disable Tracking",
     "summary": "Allow to disable open and link click tracking in mass mailing messages",
-    "version": "16.0.1.0.0",
+    "version": "13.0.1.0.0",
     "category": "Marketing/Email Marketing",
     "website": "https://github.com/OCA/social",
     "author": "hugues de keyzer, Odoo Community Association (OCA)",
     "maintainers": ["huguesdk"],
     "license": "AGPL-3",
-    "depends": [
-        "mass_mailing",
-    ],
-    "excludes": [
-        "mail_tracking",
-    ],
-    "data": [
-        "views/res_config_settings_view.xml",
-    ],
+    "depends": ["mass_mailing",],
+    "excludes": ["mail_tracking",],
+    "data": ["views/res_config_settings_view.xml",],
 }

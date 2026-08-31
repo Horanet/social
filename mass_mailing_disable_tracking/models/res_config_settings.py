@@ -14,6 +14,7 @@ class ResConfigSettings(models.TransientModel):
     mailing_track_open = fields.Boolean(
         "Track Open", config_parameter=TRACK_OPEN_PARAMETER
     )
+
     mailing_track_links = fields.Boolean(
         "Track Link Clicks", config_parameter=TRACK_LINKS_PARAMETER
     )

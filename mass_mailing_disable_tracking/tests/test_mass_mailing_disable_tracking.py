@@ -4,58 +4,49 @@
 
 from markupsafe import Markup
 
-from odoo import Command
 from odoo.tests.common import TransactionCase
 
-from odoo.addons.mass_mailing_disable_tracking.models.res_config_settings import (
-    TRACK_LINKS_PARAMETER,
-    TRACK_OPEN_PARAMETER,
-)
+TRACK_OPEN_PARAMETER = "mailing.mailing.track_open"
+TRACK_LINKS_PARAMETER = "mailing.mailing.track_links"
 
 
 class TestMassMailingDisableTracking(TransactionCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.test_mailing_list = cls.env["mailing.list"].create(
-            {
-                "name": "dummy test mailing list",
-            }
+    def setUp(self):
+        super().setUp()
+        self.test_mailing_list = self.env["mailing.list"].create(
+            {"name": "dummy test mailing list"}
         )
-        cls.test_mailing_contact = cls.env["mailing.contact"].create(
+        self.test_mailing_contact = self.env["mailing.contact"].create(
             {
                 "name": "dummy test mailing contact",
                 "email": "test@example.net",
-                "list_ids": [Command.set([cls.test_mailing_list.id])],
+                "list_ids": [(6, 0, [self.test_mailing_list.id])],
             }
         )
-        cls.markup = Markup(
+        self.markup = Markup(
             '<p>hello, <a href="https://odoo-community.org/">this is a link</a></p>'
             "<p>this is not a link: https://odoo-community.org/</p>"
             '<p><a href="https://odoo-community.org/r/some_page">'
             "this is a link that looks like a tracking link</a></p>"
         )
-        cls.test_mailing_mailing = cls.env["mailing.mailing"].create(
+        self.test_mailing_mailing = self.env["mailing.mailing"].create(
             {
                 "name": "dummy test mailing mailing",
                 "subject": "dummy test subject",
-                "contact_list_ids": [Command.set([cls.test_mailing_list.id])],
-                "body_html": cls.markup,
+                "contact_list_ids": [(6, 0, [self.test_mailing_list.id])],
+                "body_html": self.markup,
                 "keep_archives": True,
             }
         )
-        cls.base_url = cls.env["ir.config_parameter"].get_param("web.base.url")
-
-    def _get_last_mail_id(self):
-        return self.env["mail.mail"].search([], order="id desc", limit=1).id
-
-    def _get_new_mail_messages(self, last_mail_id):
-        return self.env["mail.mail"].search([("id", ">", last_mail_id or 0)])
+        self.base_url = self.env["ir.config_parameter"].get_param("web.base.url")
 
     def _send_mail(self):
-        last_mail_id = self._get_last_mail_id()
         self.test_mailing_mailing.action_send_mail()
-        mail_mail = self._get_new_mail_messages(last_mail_id)
+        mail_mail = self.env["mail.mail"].search(
+            [("mailing_id", "=", self.test_mailing_mailing.id)],
+            order="id asc",
+            limit=1,
+        )
         # the tracking image is only added when actually sending the message:
         # mail.mail._send_prepare_values() is called and the result is sent
         # (but not saved). compute the sent value by ._send_prepare_values()
@@ -76,7 +67,6 @@ class TestMassMailingDisableTracking(TransactionCase):
         self.test_mailing_mailing.body_html = Markup(
             str(self.markup)
             + '<p><a href="/unsubscribe_from_list">this is an unsubscribe link</a></p>'
-            '<p><a href="/view">this is a view link</a></p>'
             '<p><a href="/some_page">this is a local link</a></p>'
         )
         mail = self._send_mail()
@@ -87,8 +77,6 @@ class TestMassMailingDisableTracking(TransactionCase):
             rf"<body>\s*?{str(self.markup)}"
             rf'<p><a href="{self.base_url}.*?/mailing/\d+/\w*?unsubscribe\?.+">'
             "this is an unsubscribe link</a></p>"
-            rf'<p><a href="{self.base_url}/mailing/\d+/view\?.+">'
-            "this is a view link</a></p>"
             f'<p><a href="{self.base_url}/some_page">'
             rf"this is a local link</a></p>\s*?</body>",
         )
@@ -101,7 +89,8 @@ class TestMassMailingDisableTracking(TransactionCase):
         self.assertRegex(
             str(mail["body"]),
             rf"<body>\s*?{str(self.markup)}\s*?"
-            rf'<img src="{self.base_url}/mail/track/\d+/\w+/blank\.gif"/>\s*?</body>',
+            rf'<img src="{self.base_url}/mail/track/\d+/blank\.gif\?db=\w+" '
+            r'alt=""/>\s*?</body>',
         )
 
     def test_enable_links_tracking_only(self):
@@ -121,12 +110,12 @@ class TestMassMailingDisableTracking(TransactionCase):
         self.env["ir.config_parameter"].set_param(TRACK_OPEN_PARAMETER, True)
         self.env["ir.config_parameter"].set_param(TRACK_LINKS_PARAMETER, True)
         mail = self._send_mail()
-        # should work as if the module is not installed.
         self.assertRegex(
             str(mail["body"]),
             rf'<a href="{self.base_url}/r/\w+/m/\d+">this is a link</a>.+?'
             "this is not a link: https://odoo-community.org/.+?"
             rf'<a href="{self.base_url}/r/\w+/m/\d+">this is a link that '
             r"looks like a tracking link</a>.+?\s*?"
-            rf'<img src="{self.base_url}/mail/track/\d+/\w+/blank\.gif"/>\s*?</body>',
+            rf'<img src="{self.base_url}/mail/track/\d+/blank\.gif\?db=\w+" '
+            r'alt=""/>\s*?</body>',
         )
